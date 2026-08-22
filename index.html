@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2500 Hours</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --panel:#171a21;
+    --line:#262b36;
+    --text:#e7e9ee;
+    --muted:#8b93a7;
+    --accent:#4ade80;
+    --accent-dim:#1c7a45;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  header{
+    position:sticky;top:0;z-index:10;
+    background:rgba(15,17,21,.95);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    padding:18px 20px 14px;
+  }
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{margin:0 0 12px;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .stats{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end}
+  .stat .num{font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .stat .num.big{font-size:60px;color:var(--accent)}
+  .stat .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .bar{margin-top:14px;height:8px;border-radius:99px;background:var(--panel);overflow:hidden;border:1px solid var(--line)}
+  .bar > i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s ease}
+  .tools{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  button{
+    background:var(--panel);color:var(--text);border:1px solid var(--line);
+    padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;
+  }
+  button:hover{border-color:#3a4152}
+  button.primary{background:var(--accent-dim);border-color:var(--accent-dim)}
+  input[type=number]{
+    background:var(--panel);color:var(--text);border:1px solid var(--line);
+    padding:8px 10px;border-radius:8px;width:78px;font-size:13px;font-family:inherit;
+  }
+  .hint{color:var(--muted);font-size:12px}
+
+  main{padding:22px 20px 70px}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(78px,1fr));
+    gap:6px;
+  }
+  .cell{
+    display:flex;align-items:center;justify-content:center;gap:5px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:7px 4px;
+    cursor:pointer;
+    font-variant-numeric:tabular-nums;
+    font-size:13px;
+    user-select:none;
+    transition:background .12s,border-color .12s;
+  }
+  .cell:hover{border-color:#3f4759}
+  .cell input{accent-color:var(--accent);cursor:pointer;margin:0;width:13px;height:13px}
+  .cell.done{color:var(--muted);background:#12151b;border-color:#1e222b}
+  .cell.done span{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--accent)}
+  footer{
+    position:fixed;bottom:0;left:0;right:0;
+    background:rgba(15,17,21,.95);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);
+    padding:9px 20px;font-size:12px;color:var(--muted);text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>2500 Hour Reading Countdown</h1>
+    <div class="stats">
+      <div class="stat"><div class="num big" id="remaining">2500</div><div class="lbl">Hours left</div></div>
+      <div class="stat"><div class="num" id="done">0</div><div class="lbl">Hours done</div></div>
+      <div class="stat"><div class="num" id="pct">0%</div><div class="lbl">Complete</div></div>
+    </div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="tools">
+      <input type="number" id="amount" min="1" max="2500" value="4">
+      <button class="primary" id="logBtn">Log hours today</button>
+      <button id="undoBtn">Undo last</button>
+      <button id="resetBtn">Reset all</button>
+      <span class="hint">or click any number to cross it off</span>
+    </div>
+  </div>
+</header>
+
+<main><div class="wrap"><div class="grid" id="grid"></div></div></main>
+
+<footer>Progress saves automatically in this browser.</footer>
+
+<script>
+const TOTAL = 2500;
+const KEY = "hours2500";
+
+// done[i] === true  means the hour number (TOTAL - i) is crossed off
+let done = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const arr = JSON.parse(raw);
+      if(Array.isArray(arr) && arr.length === TOTAL) return arr;
+    }
+  }catch(e){}
+  return new Array(TOTAL).fill(false);
+}
+function save(){
+  try{
+    localStorage.setItem(KEY, JSON.stringify(done));
+  }catch(e){
+    warn('Progress could NOT be saved. If this is a private/incognito window, switch to a normal one or your checks will vanish on reload.');
+  }
+}
+function warn(msg){
+  let el = document.getElementById('warnbar');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'warnbar';
+    el.style.cssText = 'background:#4a1d1d;border:1px solid #7f2d2d;color:#ffd9d9;padding:9px 12px;border-radius:8px;margin-top:12px;font-size:13px';
+    var host = document.querySelector('header .wrap');
+    if(host) host.appendChild(el);
+  }
+  el.textContent = msg;
+}
+
+const grid = document.getElementById("grid");
+const cells = [];
+
+// Build 2500 -> 1
+const frag = document.createDocumentFragment();
+for(let i = 0; i < TOTAL; i++){
+  const n = TOTAL - i;
+  const cell = document.createElement("label");
+  cell.className = "cell";
+  cell.innerHTML = '<input type="checkbox"><span>' + n + '</span>';
+  cell.querySelector("input").addEventListener("change", () => toggle(i));
+  frag.appendChild(cell);
+  cells.push(cell);
+}
+grid.appendChild(frag);
+
+function toggle(i){
+  done[i] = !done[i];
+  paint(i);
+  save();
+  render();
+}
+
+function paint(i){
+  const on = done[i];
+  cells[i].classList.toggle("done", on);
+  cells[i].querySelector("input").checked = on;
+}
+
+function render(){
+  const d = done.reduce((a, b) => a + (b ? 1 : 0), 0);
+  const left = TOTAL - d;
+  document.getElementById("remaining").textContent = left;
+  document.getElementById("done").textContent = d;
+  const p = d / TOTAL * 100;
+  document.getElementById("pct").textContent = p.toFixed(1) + "%";
+  document.getElementById("fill").style.width = p + "%";
+  document.title = left + " hours left";
+}
+
+// Cross off the next N highest uncrossed numbers
+document.getElementById("logBtn").addEventListener("click", () => {
+  let n = parseInt(document.getElementById("amount").value, 10);
+  if(!n || n < 1) return;
+  for(let i = 0; i < TOTAL && n > 0; i++){
+    if(!done[i]){ done[i] = true; paint(i); n--; }
+  }
+  save(); render();
+});
+
+// Undo the most recently crossed-off block (lowest-index run from the top)
+document.getElementById("undoBtn").addEventListener("click", () => {
+  let n = parseInt(document.getElementById("amount").value, 10);
+  if(!n || n < 1) return;
+  for(let i = TOTAL - 1; i >= 0 && n > 0; i--){
+    if(done[i]){ done[i] = false; paint(i); n--; }
+  }
+  save(); render();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if(!confirm("Clear all progress and start again from 2500?")) return;
+  done = new Array(TOTAL).fill(false);
+  for(let i = 0; i < TOTAL; i++) paint(i);
+  save(); render();
+});
+
+for(let i = 0; i < TOTAL; i++) if(done[i]) paint(i);
+render();
+</script>
+</body>
+</html>
