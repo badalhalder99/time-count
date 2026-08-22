@@ -6,77 +6,72 @@
 <title>2500 Hours</title>
 <style>
   :root{
-    --bg:#0f1115;
-    --panel:#171a21;
-    --line:#262b36;
-    --text:#e7e9ee;
-    --muted:#8b93a7;
-    --accent:#4ade80;
-    --accent-dim:#1c7a45;
+    --bg:#0f1115; --panel:#171a21; --line:#262b36;
+    --text:#e7e9ee; --muted:#8b93a7;
+    --accent:#4ade80; --accent-dim:#1c7a45;
   }
   *{box-sizing:border-box}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
-  }
-  header{
-    position:sticky;top:0;z-index:10;
-    background:rgba(15,17,21,.95);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);
-    padding:18px 20px 14px;
-  }
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:"Segoe UI",system-ui,-apple-system,sans-serif}
   .wrap{max-width:1100px;margin:0 auto}
-  h1{margin:0 0 12px;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
-  .stats{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end}
-  .stat .num{font-size:44px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-  .stat .num.big{font-size:60px;color:var(--accent)}
-  .stat .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
-  .bar{margin-top:14px;height:8px;border-radius:99px;background:var(--panel);overflow:hidden;border:1px solid var(--line)}
-  .bar > i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s ease}
-  .tools{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  button{
-    background:var(--panel);color:var(--text);border:1px solid var(--line);
-    padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;
-  }
+  header{position:sticky;top:0;z-index:10;background:rgba(15,17,21,.96);
+         backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:16px 20px 13px}
+  h1{margin:0 0 11px;font-size:14px;letter-spacing:.14em;text-transform:uppercase;
+     color:var(--muted);font-weight:600}
+  .stats{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end}
+  .stat .num{font-size:40px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+  .stat .num.big{font-size:56px;color:var(--accent)}
+  .stat .num.sm{font-size:26px}
+  .stat .lbl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+  .bar{margin-top:12px;height:8px;border-radius:99px;background:var(--panel);
+       overflow:hidden;border:1px solid var(--line)}
+  .bar > i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+  .tools{margin-top:12px;display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+  button{background:var(--panel);color:var(--text);border:1px solid var(--line);
+         padding:8px 13px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
   button:hover{border-color:#3a4152}
   button.primary{background:var(--accent-dim);border-color:var(--accent-dim)}
-  input[type=number]{
-    background:var(--panel);color:var(--text);border:1px solid var(--line);
-    padding:8px 10px;border-radius:8px;width:78px;font-size:13px;font-family:inherit;
-  }
+  input[type=number],input[type=date]{background:var(--panel);color:var(--text);
+    border:1px solid var(--line);padding:8px 10px;border-radius:8px;font-size:13px;
+    font-family:inherit;color-scheme:dark}
+  input[type=number]{width:70px}
   .hint{color:var(--muted);font-size:12px}
 
-  main{padding:22px 20px 70px}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(78px,1fr));
-    gap:6px;
-  }
-  .cell{
-    display:flex;align-items:center;justify-content:center;gap:5px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:7px;
-    padding:7px 4px;
-    cursor:pointer;
-    font-variant-numeric:tabular-nums;
-    font-size:13px;
-    user-select:none;
-    transition:background .12s,border-color .12s;
-  }
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+         padding:16px 18px;margin:20px 0}
+  .panel h2{margin:0 0 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+            color:var(--muted);font-weight:600}
+  .kpis{display:flex;flex-wrap:wrap;gap:22px;margin-bottom:18px}
+  .chart{display:flex;align-items:flex-end;gap:3px;height:90px;
+         padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .chart .col{flex:1;position:relative;height:100%;display:flex;align-items:flex-end}
+  .chart .col i{display:block;width:100%;background:var(--accent-dim);border-radius:3px 3px 0 0;min-height:2px}
+  .chart .col.has i{background:var(--accent)}
+  .chart .col b{position:absolute;bottom:-16px;left:0;right:0;text-align:center;
+                font-size:9px;color:var(--muted);font-weight:400}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+     color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:9px 10px;border-bottom:1px solid #1e222b;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td.h{color:var(--accent);font-weight:600}
+  .empty{color:var(--muted);font-size:13px;padding:6px 0}
+
+  main{padding:0 20px 70px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+  .cell{display:flex;align-items:center;justify-content:center;gap:5px;background:var(--panel);
+        border:1px solid var(--line);border-radius:7px;padding:7px 4px;cursor:pointer;
+        font-variant-numeric:tabular-nums;font-size:13px;user-select:none;
+        transition:background .12s,border-color .12s}
   .cell:hover{border-color:#3f4759}
   .cell input{accent-color:var(--accent);cursor:pointer;margin:0;width:13px;height:13px}
   .cell.done{color:var(--muted);background:#12151b;border-color:#1e222b}
-  .cell.done span{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--accent)}
-  footer{
-    position:fixed;bottom:0;left:0;right:0;
-    background:rgba(15,17,21,.95);backdrop-filter:blur(8px);
-    border-top:1px solid var(--line);
-    padding:9px 20px;font-size:12px;color:var(--muted);text-align:center;
-  }
+  .cell.done span{text-decoration:line-through;text-decoration-thickness:2px;
+                  text-decoration-color:var(--accent)}
+  .cell.flash{border-color:var(--accent);background:#16241c}
+  footer{position:fixed;bottom:0;left:0;right:0;background:rgba(15,17,21,.96);
+         backdrop-filter:blur(8px);border-top:1px solid var(--line);
+         padding:9px 20px;font-size:12px;color:var(--muted);text-align:center}
 </style>
 </head>
 <body>
@@ -88,17 +83,33 @@
       <div class="stat"><div class="num big" id="remaining">2500</div><div class="lbl">Hours left</div></div>
       <div class="stat"><div class="num" id="done">0</div><div class="lbl">Hours done</div></div>
       <div class="stat"><div class="num" id="pct">0%</div><div class="lbl">Complete</div></div>
+      <div class="stat"><div class="num sm" id="todayHrs">0</div><div class="lbl">Today</div></div>
+      <div class="stat"><div class="num sm" id="streak">0</div><div class="lbl">Day streak</div></div>
     </div>
     <div class="bar"><i id="fill"></i></div>
     <div class="tools">
+      <input type="date" id="theDate">
       <input type="number" id="amount" min="1" max="2500" value="4">
-      <button class="primary" id="logBtn">Log hours today</button>
-      <button id="undoBtn">Undo last</button>
-      <button id="resetBtn">Reset all</button>
-      <span class="hint">or click any number to cross it off</span>
+      <button class="primary" id="logBtn">Log hours</button>
+      <button id="histBtn">Hide history</button>
+      <span class="hint">clicks are stamped with the date above &middot; click a crossed number again to undo it</span>
     </div>
   </div>
 </header>
+
+<div class="wrap" style="padding:0 20px">
+  <div class="panel" id="histPanel">
+    <h2>Progress by date</h2>
+    <div class="kpis">
+      <div class="stat"><div class="num sm" id="kDays">0</div><div class="lbl">Days studied</div></div>
+      <div class="stat"><div class="num sm" id="kAvg">0</div><div class="lbl">Avg / day</div></div>
+      <div class="stat"><div class="num sm" id="kBest">0</div><div class="lbl">Best day</div></div>
+      <div class="stat"><div class="num sm" id="kEta">&mdash;</div><div class="lbl">Finish at this pace</div></div>
+    </div>
+    <div class="chart" id="chart"></div>
+    <div id="tableWrap" style="margin-top:26px"></div>
+  </div>
+</div>
 
 <main><div class="wrap"><div class="grid" id="grid"></div></div></main>
 
@@ -106,50 +117,74 @@
 
 <script>
 const TOTAL = 2500;
-const KEY = "hours2500";
+const KEY = "hours2500";        // array of booleans, index i => hour number (TOTAL - i)
+const DKEY = "hours2500_dates"; // { index: "YYYY-MM-DD" }
 
-// done[i] === true  means the hour number (TOTAL - i) is crossed off
-let done = load();
+let done = loadDone();
+let dates = loadDates();
 
-function load(){
+function loadDone(){
   try{
-    const raw = localStorage.getItem(KEY);
-    if(raw){
-      const arr = JSON.parse(raw);
-      if(Array.isArray(arr) && arr.length === TOTAL) return arr;
-    }
+    const a = JSON.parse(localStorage.getItem(KEY));
+    if(Array.isArray(a) && a.length === TOTAL) return a;
   }catch(e){}
   return new Array(TOTAL).fill(false);
+}
+function loadDates(){
+  try{
+    const o = JSON.parse(localStorage.getItem(DKEY));
+    if(o && typeof o === "object" && !Array.isArray(o)) return o;
+  }catch(e){}
+  return {};
 }
 function save(){
   try{
     localStorage.setItem(KEY, JSON.stringify(done));
+    localStorage.setItem(DKEY, JSON.stringify(dates));
   }catch(e){
-    warn('Progress could NOT be saved. If this is a private/incognito window, switch to a normal one or your checks will vanish on reload.');
+    warn("Progress could NOT be saved. If this is a private/incognito window, switch to a normal one or your checks will vanish on reload.");
   }
 }
 function warn(msg){
-  let el = document.getElementById('warnbar');
+  let el = document.getElementById("warnbar");
   if(!el){
-    el = document.createElement('div');
-    el.id = 'warnbar';
-    el.style.cssText = 'background:#4a1d1d;border:1px solid #7f2d2d;color:#ffd9d9;padding:9px 12px;border-radius:8px;margin-top:12px;font-size:13px';
-    var host = document.querySelector('header .wrap');
+    el = document.createElement("div");
+    el.id = "warnbar";
+    el.style.cssText = "background:#4a1d1d;border:1px solid #7f2d2d;color:#ffd9d9;padding:9px 12px;border-radius:8px;margin-top:12px;font-size:13px";
+    const host = document.querySelector("header .wrap");
     if(host) host.appendChild(el);
   }
   el.textContent = msg;
 }
 
+/* ---------- date helpers ---------- */
+function ymd(d){
+  return d.getFullYear() + "-" +
+         String(d.getMonth() + 1).padStart(2, "0") + "-" +
+         String(d.getDate()).padStart(2, "0");
+}
+function today(){ return ymd(new Date()); }
+function parseYmd(s){ const p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function shiftDays(s, n){ const d = parseYmd(s); d.setDate(d.getDate() + n); return ymd(d); }
+function pretty(s){
+  const t = today();
+  if(s === t) return "Today";
+  if(s === shiftDays(t, -1)) return "Yesterday";
+  return parseYmd(s).toLocaleDateString(undefined, {weekday:"short", month:"short", day:"numeric"});
+}
+
+const dateInput = document.getElementById("theDate");
+dateInput.value = today();
+function chosenDate(){ return dateInput.value || today(); }
+
+/* ---------- grid ---------- */
 const grid = document.getElementById("grid");
 const cells = [];
-
-// Build 2500 -> 1
 const frag = document.createDocumentFragment();
 for(let i = 0; i < TOTAL; i++){
-  const n = TOTAL - i;
   const cell = document.createElement("label");
   cell.className = "cell";
-  cell.innerHTML = '<input type="checkbox"><span>' + n + '</span>';
+  cell.innerHTML = '<input type="checkbox"><span>' + (TOTAL - i) + '</span>';
   cell.querySelector("input").addEventListener("change", () => toggle(i));
   frag.appendChild(cell);
   cells.push(cell);
@@ -157,18 +192,69 @@ for(let i = 0; i < TOTAL; i++){
 grid.appendChild(frag);
 
 function toggle(i){
-  done[i] = !done[i];
-  paint(i);
-  save();
-  render();
+  if(done[i]){ done[i] = false; delete dates[i]; }
+  else { done[i] = true; dates[i] = chosenDate(); }
+  paint(i); save(); render();
 }
-
 function paint(i){
   const on = done[i];
+  const num = TOTAL - i;
   cells[i].classList.toggle("done", on);
   cells[i].querySelector("input").checked = on;
+  cells[i].title = !on ? ("Hour " + num)
+    : dates[i] ? ("Hour " + num + " — done on " + pretty(dates[i]) + " (" + dates[i] + ")")
+               : ("Hour " + num + " — done (no date recorded)");
 }
 
+/* ---------- buttons ---------- */
+function amount(){
+  const n = parseInt(document.getElementById("amount").value, 10);
+  return (!n || n < 1) ? 0 : n;
+}
+document.getElementById("logBtn").addEventListener("click", () => {
+  let n = amount(); if(!n) return;
+  const d = chosenDate(), touched = [];
+  for(let i = 0; i < TOTAL && n > 0; i++){
+    if(!done[i]){ done[i] = true; dates[i] = d; paint(i); touched.push(i); n--; }
+  }
+  save(); render();
+  if(touched.length){
+    cells[touched[0]].scrollIntoView({block:"center", behavior:"smooth"});
+    touched.forEach(i => cells[i].classList.add("flash"));
+    setTimeout(() => touched.forEach(i => cells[i].classList.remove("flash")), 900);
+  }
+});
+const histBtn = document.getElementById("histBtn");
+const histPanel = document.getElementById("histPanel");
+histBtn.addEventListener("click", () => {
+  const hidden = histPanel.style.display === "none";
+  histPanel.style.display = hidden ? "" : "none";
+  histBtn.textContent = hidden ? "Hide history" : "Show history";
+});
+
+/* ---------- stats + history ---------- */
+function byDate(){
+  const map = {};   // "YYYY-MM-DD" -> {n, hi, lo}
+  let undated = 0;
+  for(let i = 0; i < TOTAL; i++){
+    if(!done[i]) continue;
+    const d = dates[i];
+    if(!d){ undated++; continue; }
+    const num = TOTAL - i;
+    if(!map[d]) map[d] = {n:0, hi:num, lo:num};
+    map[d].n++;
+    if(num > map[d].hi) map[d].hi = num;
+    if(num < map[d].lo) map[d].lo = num;
+  }
+  return {map, undated};
+}
+function streakOf(map){
+  let day = today();
+  if(!map[day]) day = shiftDays(day, -1);   // today not logged yet doesn't break it
+  let s = 0;
+  while(map[day]){ s++; day = shiftDays(day, -1); }
+  return s;
+}
 function render(){
   const d = done.reduce((a, b) => a + (b ? 1 : 0), 0);
   const left = TOTAL - d;
@@ -178,34 +264,66 @@ function render(){
   document.getElementById("pct").textContent = p.toFixed(1) + "%";
   document.getElementById("fill").style.width = p + "%";
   document.title = left + " hours left";
+
+  const res = byDate();
+  const map = res.map, undated = res.undated;
+  const keys = Object.keys(map).sort();            // oldest -> newest
+  document.getElementById("todayHrs").textContent = map[today()] ? map[today()].n : 0;
+  document.getElementById("streak").textContent = streakOf(map);
+
+  const days = keys.length;
+  const logged = keys.reduce((a, k) => a + map[k].n, 0);
+  const avg = days ? logged / days : 0;
+  const best = keys.reduce((a, k) => Math.max(a, map[k].n), 0);
+  document.getElementById("kDays").textContent = days;
+  document.getElementById("kAvg").textContent = days ? avg.toFixed(1) : "0";
+  document.getElementById("kBest").textContent = best;
+  document.getElementById("kEta").textContent =
+    left === 0 ? "Done!"
+    : avg > 0 ? parseYmd(shiftDays(today(), Math.ceil(left / avg)))
+                  .toLocaleDateString(undefined, {month:"short", day:"numeric", year:"numeric"})
+    : "—";
+
+  // last 30 days chart
+  const chart = document.getElementById("chart");
+  chart.innerHTML = "";
+  const peak = Math.max(best, 1);
+  for(let k = 29; k >= 0; k--){
+    const day = shiftDays(today(), -k);
+    const n = map[day] ? map[day].n : 0;
+    const col = document.createElement("div");
+    col.className = "col" + (n ? " has" : "");
+    col.title = pretty(day) + ": " + n + " hour" + (n === 1 ? "" : "s");
+    col.innerHTML = '<i style="height:' + (n / peak * 100) + '%"></i>' +
+                    (k % 7 === 0 ? "<b>" + parseYmd(day).getDate() + "</b>" : "");
+    chart.appendChild(col);
+  }
+
+  // table, newest first
+  const wrap = document.getElementById("tableWrap");
+  if(!days && !undated){
+    wrap.innerHTML = '<div class="empty">No hours logged yet. Pick a date, set the hours, and press <b>Log hours</b>.</div>';
+    return;
+  }
+  let run = 0;
+  const asc = keys.map(k => {
+    run += map[k].n;
+    return {k:k, n:map[k].n, hi:map[k].hi, lo:map[k].lo, cum:run};
+  });
+  let rows = "";
+  asc.reverse().forEach(r => {
+    rows += "<tr><td>" + pretty(r.k) + "</td><td class='h'>" + r.n + " h</td><td>" +
+            (r.hi === r.lo ? r.hi : r.hi + " – " + r.lo) + "</td><td>" + r.cum +
+            "</td><td>" + (TOTAL - r.cum) + "</td></tr>";
+  });
+  if(undated){
+    rows += "<tr><td>Earlier (no date)</td><td class='h'>" + undated +
+            " h</td><td>—</td><td>—</td><td>—</td></tr>";
+  }
+  wrap.innerHTML = "<table><thead><tr><th>Date</th><th>Hours</th><th>Numbers crossed</th>" +
+                   "<th>Total done</th><th>Left after</th></tr></thead><tbody>" +
+                   rows + "</tbody></table>";
 }
-
-// Cross off the next N highest uncrossed numbers
-document.getElementById("logBtn").addEventListener("click", () => {
-  let n = parseInt(document.getElementById("amount").value, 10);
-  if(!n || n < 1) return;
-  for(let i = 0; i < TOTAL && n > 0; i++){
-    if(!done[i]){ done[i] = true; paint(i); n--; }
-  }
-  save(); render();
-});
-
-// Undo the most recently crossed-off block (lowest-index run from the top)
-document.getElementById("undoBtn").addEventListener("click", () => {
-  let n = parseInt(document.getElementById("amount").value, 10);
-  if(!n || n < 1) return;
-  for(let i = TOTAL - 1; i >= 0 && n > 0; i--){
-    if(done[i]){ done[i] = false; paint(i); n--; }
-  }
-  save(); render();
-});
-
-document.getElementById("resetBtn").addEventListener("click", () => {
-  if(!confirm("Clear all progress and start again from 2500?")) return;
-  done = new Array(TOTAL).fill(false);
-  for(let i = 0; i < TOTAL; i++) paint(i);
-  save(); render();
-});
 
 for(let i = 0; i < TOTAL; i++) if(done[i]) paint(i);
 render();
