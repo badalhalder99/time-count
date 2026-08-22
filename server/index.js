@@ -1,7 +1,10 @@
-require("dotenv").config();
-
 const fs = require("fs");
 const path = require("path");
+
+// Load server/.env by absolute path, not relative to the current directory:
+// `yarn start` runs from the repo root, where a bare config() would look for
+// <root>/.env, find nothing, and silently start with no database.
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
