@@ -1,106 +1,139 @@
 # 2500 Hours
 
 A reading countdown: 2500 numbered checkboxes, each one an hour. Cross them off and
-the counter falls 2500 → 2499 → 2498 … → 0. Every hour is stamped with the date it
-was finished, so the history panel shows how many hours you did on each day.
+the counter falls 2500 → 2499 → 2498 … → 0. Every hour is stamped with the day it
+was finished, so you can see how many hours you did on each date.
 
-Progress lives in **MongoDB**, so the same count follows you across laptop and phone.
-
----
-
-## Setup (about 10 minutes)
-
-### 1. Create the database
-
-1. Sign in to [MongoDB Atlas](https://cloud.mongodb.com) with your account.
-2. **Create a free cluster** (the M0 tier is free forever — no card needed).
-3. **Database Access** → *Add New Database User*. Pick a username and a strong
-   password. Copy them somewhere safe.
-4. **Network Access** → *Add IP Address* → **Allow access from anywhere**
-   (`0.0.0.0/0`). This is required: Vercel's servers don't have fixed IPs.
-5. **Database** → *Connect* → *Drivers* → copy the connection string. It looks like:
-
-   ```
-   mongodb+srv://USERNAME:PASSWORD@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
-   ```
-
-   Replace `<password>` in it with the real password from step 3.
-
-> Treat this string like a password — it *is* one. Don't paste it into a chat,
-> a screenshot, or a public repo.
-
-### 2. Deploy to Vercel
-
-```bash
-cd C:\Users\badal\Desktop\Time-count
-npm install
-npx vercel
-```
-
-Accept the defaults. Then add the connection string as an environment variable —
-either in the Vercel dashboard (**Project → Settings → Environment Variables**) or
-from the terminal:
-
-```bash
-npx vercel env add MONGODB_URI
-```
-
-Paste the connection string when prompted, and select **all three** environments
-(Production, Preview, Development). Then redeploy so the variable takes effect:
-
-```bash
-npx vercel --prod
-```
-
-Open the URL. The pill in the toolbar should read **"Connected to database"**.
-
-### 3. Run it locally (optional)
-
-```bash
-copy .env.example .env.local     # then edit .env.local and put your real URI in it
-npm install
-npx vercel dev
-```
-
-Opening `index.html` by double-clicking still works, but with no server there is no
-database — it falls back to this-device-only storage and the pill shows "Offline".
+**React (Vite) + Express + MongoDB.** Progress lives in the database, so the same
+count follows you across laptop and phone.
 
 ---
 
-## How syncing behaves
+## Quick start
 
-- Every change saves instantly in the browser, then pushes to MongoDB about
-  0.7 seconds later (so logging 5 hours is one database write, not five).
-- **Offline still works.** Changes are kept locally and marked unsynced; the next
-  time the page loads online, they're pushed up automatically.
-- On load, if this device has unsynced changes they win; otherwise the database wins.
-  So don't edit on two devices while one is offline — the last one to come online
-  overwrites the other.
-- The toolbar pill always tells you which state you're in: *Saved to database*,
-  *Synced from database*, or *Offline — saved on this device*.
+Uses **yarn workspaces** — one install covers both the client and the server.
 
-## Files
+```bash
+yarn install
+```
 
-| File | What it does |
-|---|---|
-| `index.html` | The whole UI — grid, stats, date history, sync logic |
-| `api/state.js` | Vercel serverless function: `GET` reads progress, `POST` saves it |
-| `package.json` | Just the `mongodb` driver |
-| `.env.example` | Template for local env vars — real values go in `.env.local` |
+Then create `server/.env` with your database connection:
 
-Data is one document in the `timecount` database, `progress` collection:
+```bash
+copy server\.env.example server\.env
+```
+
+Open `server/.env` and set `MONGODB_URI` (see below). Then:
+
+```bash
+yarn dev                   # Express on :4000, React on :5173
+```
+
+Open **http://localhost:5173**.
+
+### Getting a MONGODB_URI
+
+**Option A — MongoDB Atlas (free, works from anywhere):**
+
+1. Sign in to [MongoDB Atlas](https://cloud.mongodb.com) and create a free **M0** cluster.
+2. **Database Access** → add a user with a password.
+3. **Network Access** → allow your IP (or `0.0.0.0/0` if you'll deploy to a host
+   with changing IPs).
+4. **Database → Connect → Drivers** → copy the string and put the real password in it:
+   ```
+   MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/timecount?retryWrites=true&w=majority
+   ```
+
+**Option B — MongoDB running on your own machine:**
+
+```
+MONGODB_URI=mongodb://127.0.0.1:27017/timecount
+```
+
+> The URI contains a password. `server/.env` is git-ignored — keep it that way, and
+> don't paste the string into chats, screenshots, or issues.
+
+---
+
+## Production
+
+```bash
+yarn build                 # builds the React app into client/dist
+yarn start                 # Express serves the API *and* the built app on :4000
+```
+
+One process, one port — visit http://localhost:4000.
+
+---
+
+## How it works
+
+```
+client/                    React app (Vite)
+  src/
+    App.jsx                page layout, log action, flash + scroll
+    components/
+      Grid.jsx             2500 memoised checkbox cells
+      Stats.jsx            hours left / done / percent / today / streak
+      History.jsx          KPIs, 30-day bar chart, per-day table
+      Toolbar.jsx          date picker, hours box, buttons
+      SyncPill.jsx         database connection indicator
+    hooks/useProgress.js   state + MongoDB sync + offline cache
+    lib/
+      api.js               fetch wrappers for /api/state
+      dates.js             local-time date helpers
+      stats.js             grouping, streak, averages, projection
+      constants.js         TOTAL = 2500
+
+server/
+  index.js                 Express app, Mongoose model, static hosting
+  validate.js              strict input sanitising
+  .env.example             template for your connection string
+
+scripts/
+  dev.js                   starts API + client (spawns node directly, no shell)
+  build.js                 builds the client (same, no shell)
+```
+
+> **Why the custom scripts?** Tools like `concurrently` launch processes through
+> `cmd.exe`. On Windows machines where `C:\Windows\System32` is missing from
+> PATH, that fails with `spawn cmd.exe ENOENT`. These scripts spawn `node`
+> directly with absolute paths, so there is no shell to resolve.
+
+### The API
+
+| Method | Route | Does |
+|---|---|---|
+| `GET` | `/api/health` | Reports whether the database is connected |
+| `GET` | `/api/state` | Returns `{ crossed, dates, updatedAt }` |
+| `PUT` | `/api/state` | Saves the whole progress document |
+
+All progress is one document in the `progress` collection:
 
 ```js
 {
   _id: "main",
-  crossed: [0, 1, 2, ...],          // indexes; index 0 = hour 2500
-  dates: { "0": "2026-08-22", ... }, // which day each hour was finished
-  updatedAt: 1787417350972
+  crossed: [0, 1, 2, ...],           // indexes; index 0 = hour 2500
+  dates: { "0": "2026-08-22", ... },  // the day each hour was finished
+  updatedAt: 1787418207252
 }
 ```
 
-## Note on privacy
+### Syncing rules
 
-The `/api/state` endpoint has no password on it. Anyone who knows your Vercel URL
-could read or change your count. For a personal reading tracker that's usually fine,
-but if you want it locked down, a shared-password gate is a small addition.
+- Changes save to the browser instantly, then push to MongoDB ~0.7s later, so
+  logging 5 hours is one database write instead of five.
+- **Offline still works.** Edits are kept locally and flagged unsynced; they're
+  pushed automatically when the page next loads online, or when the network returns.
+- On load, unsynced local edits win; otherwise the database wins. So don't edit on
+  two devices while one is offline — the last to reconnect overwrites the other.
+- The pill in the toolbar always shows the current state: *Saved to database*,
+  *Synced from database*, or *Offline — saved on this device*.
+- If you used the earlier single-file version, that progress is migrated out of
+  `localStorage` on first load and pushed up to the database.
+
+### A note on access
+
+`/api/state` has no authentication. On `localhost` that's fine; if you host it
+publicly, anyone with the URL can read or change your count. Worth adding a
+password gate before deploying it to the open internet.
