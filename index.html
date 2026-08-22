@@ -37,6 +37,15 @@
   input[type=number]{width:70px}
   .hint{color:var(--muted);font-size:12px}
 
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 11px;
+        border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+  .pill i{width:7px;height:7px;border-radius:99px;background:var(--muted);display:block}
+  .pill.ok{color:var(--accent);border-color:#1f4a32}
+  .pill.ok i{background:var(--accent)}
+  .pill.busy i{background:#facc15}
+  .pill.off{color:#ffb4b4;border-color:#5d2626}
+  .pill.off i{background:#ef4444}
+
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
          padding:16px 18px;margin:20px 0}
   .panel h2{margin:0 0 14px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
@@ -92,6 +101,7 @@
       <input type="number" id="amount" min="1" max="2500" value="4">
       <button class="primary" id="logBtn">Log hours</button>
       <button id="histBtn">Hide history</button>
+      <span class="pill" id="sync"><i></i><span id="syncText">Connecting…</span></span>
       <span class="hint">clicks are stamped with the date above &middot; click a crossed number again to undo it</span>
     </div>
   </div>
@@ -113,12 +123,14 @@
 
 <main><div class="wrap"><div class="grid" id="grid"></div></div></main>
 
-<footer>Progress saves automatically in this browser.</footer>
+<footer id="foot">Saved on this device and synced to your database.</footer>
 
 <script>
 const TOTAL = 2500;
-const KEY = "hours2500";        // array of booleans, index i => hour number (TOTAL - i)
-const DKEY = "hours2500_dates"; // { index: "YYYY-MM-DD" }
+const API = "/api/state";
+const KEY = "hours2500";         // array of booleans, index i => hour number (TOTAL - i)
+const DKEY = "hours2500_dates";  // { index: "YYYY-MM-DD" }
+const DIRTY = "hours2500_dirty"; // "1" while local changes are not yet in the database
 
 let done = loadDone();
 let dates = loadDates();
@@ -137,25 +149,91 @@ function loadDates(){
   }catch(e){}
   return {};
 }
-function save(){
+function localSave(markDirty){
   try{
     localStorage.setItem(KEY, JSON.stringify(done));
     localStorage.setItem(DKEY, JSON.stringify(dates));
+    if(markDirty) localStorage.setItem(DIRTY, "1");
   }catch(e){
-    warn("Progress could NOT be saved. If this is a private/incognito window, switch to a normal one or your checks will vanish on reload.");
+    setSync("off", "Not saved — private window?");
   }
 }
-function warn(msg){
-  let el = document.getElementById("warnbar");
-  if(!el){
-    el = document.createElement("div");
-    el.id = "warnbar";
-    el.style.cssText = "background:#4a1d1d;border:1px solid #7f2d2d;color:#ffd9d9;padding:9px 12px;border-radius:8px;margin-top:12px;font-size:13px";
-    const host = document.querySelector("header .wrap");
-    if(host) host.appendChild(el);
-  }
-  el.textContent = msg;
+function isDirty(){
+  try{ return localStorage.getItem(DIRTY) === "1"; }catch(e){ return false; }
 }
+function clearDirty(){
+  try{ localStorage.removeItem(DIRTY); }catch(e){}
+}
+
+/* ---------- database sync ---------- */
+const syncPill = document.getElementById("sync");
+const syncText = document.getElementById("syncText");
+function setSync(kind, msg){
+  syncPill.className = "pill" + (kind === "ok" ? " ok" : kind === "off" ? " off" : " busy");
+  syncText.textContent = msg;
+  syncPill.title = kind === "off"
+    ? "Your progress is safe in this browser, but it is not reaching the database."
+    : "";
+}
+
+function crossedList(){
+  const a = [];
+  for(let i = 0; i < TOTAL; i++) if(done[i]) a.push(i);
+  return a;
+}
+function applyState(crossed, ds){
+  done = new Array(TOTAL).fill(false);
+  (crossed || []).forEach(i => { if(i >= 0 && i < TOTAL) done[i] = true; });
+  dates = ds || {};
+  for(let i = 0; i < TOTAL; i++) paint(i);
+  render();
+}
+
+let pushTimer = null;
+function scheduleSync(){
+  setSync("busy", "Saving…");
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushRemote, 700);
+}
+async function pushRemote(){
+  setSync("busy", "Saving…");
+  try{
+    const r = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({crossed: crossedList(), dates: dates})
+    });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    await r.json();
+    clearDirty();
+    setSync("ok", "Saved to database");
+  }catch(e){
+    setSync("off", "Offline — saved on this device");
+  }
+}
+async function pullRemote(){
+  // Local edits that never reached the database win, so nothing is lost offline.
+  if(isDirty()){ await pushRemote(); return; }
+  setSync("busy", "Connecting…");
+  try{
+    const r = await fetch(API);
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json();
+    const serverHas = (j.crossed || []).length > 0 || Object.keys(j.dates || {}).length > 0;
+    if(serverHas){
+      applyState(j.crossed, j.dates);
+      localSave(false);
+      setSync("ok", "Synced from database");
+    }else if(crossedList().length){
+      await pushRemote();          // first run: seed the database from this device
+    }else{
+      setSync("ok", "Connected to database");
+    }
+  }catch(e){
+    setSync("off", "Offline — saved on this device");
+  }
+}
+window.addEventListener("online", () => { if(isDirty()) pushRemote(); });
 
 /* ---------- date helpers ---------- */
 function ymd(d){
@@ -194,7 +272,7 @@ grid.appendChild(frag);
 function toggle(i){
   if(done[i]){ done[i] = false; delete dates[i]; }
   else { done[i] = true; dates[i] = chosenDate(); }
-  paint(i); save(); render();
+  paint(i); localSave(true); render(); scheduleSync();
 }
 function paint(i){
   const on = done[i];
@@ -217,7 +295,7 @@ document.getElementById("logBtn").addEventListener("click", () => {
   for(let i = 0; i < TOTAL && n > 0; i++){
     if(!done[i]){ done[i] = true; dates[i] = d; paint(i); touched.push(i); n--; }
   }
-  save(); render();
+  localSave(true); render(); scheduleSync();
   if(touched.length){
     cells[touched[0]].scrollIntoView({block:"center", behavior:"smooth"});
     touched.forEach(i => cells[i].classList.add("flash"));
@@ -327,6 +405,7 @@ function render(){
 
 for(let i = 0; i < TOTAL; i++) if(done[i]) paint(i);
 render();
+pullRemote();
 </script>
 </body>
 </html>

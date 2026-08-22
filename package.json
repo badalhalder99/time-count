@@ -1,0 +1,9 @@
+{
+  "name": "time-count",
+  "version": "1.0.0",
+  "private": true,
+  "description": "2500 hour reading countdown with MongoDB sync",
+  "dependencies": {
+    "mongodb": "^6.12.0"
+  }
+}
