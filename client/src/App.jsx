@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Countdown from "./components/Countdown";
 import Drawer from "./components/Drawer";
 import Grid from "./components/Grid";
 import Hero from "./components/Hero";
 import History from "./components/History";
-import SyncPill from "./components/SyncPill";
-import Tiles from "./components/Tiles";
-import Toolbar from "./components/Toolbar";
+import QuickActions from "./components/QuickActions";
 import { useProgress } from "./hooks/useProgress";
 import { TOTAL } from "./lib/constants.js";
 import { today } from "./lib/dates.js";
 import { summarize } from "./lib/stats.js";
 
 export default function App() {
-  const { crossed, crossedList, dates, sync, toggle, logHours } = useProgress();
-  const [date, setDate] = useState(today);
-  const [amount, setAmount] = useState("4");
+  const { crossed, crossedList, dates, toggle } = useProgress();
   const [showHistory, setShowHistory] = useState(false);
   const [flashing, setFlashing] = useState(() => new Set());
 
@@ -42,12 +39,6 @@ export default function App() {
     });
   }, []);
 
-  function handleLog() {
-    const n = parseInt(amount, 10);
-    if (!n || n < 1) return;
-    revealAndFlash(logHours(n, date || today()));
-  }
-
   function handleJump() {
     if (firstOpen === null) return;
     revealAndFlash([firstOpen]);
@@ -55,47 +46,16 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="topbar">
-        <div className="container topbar-inner">
-          <div className="brand">
-            <span className="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="17" height="17" fill="none"
-                   stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                   strokeLinejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-              </svg>
-            </span>
-            <div className="brand-text">
-              <span className="brand-title">Reading Countdown</span>
-              <span className="brand-sub">2,500 hours, one at a time</span>
-            </div>
-          </div>
-
-          <div className="topbar-right">
-            <div className="topbar-count">
-              <strong>{s.hoursLeft.toLocaleString()}</strong>
-              <span>left</span>
-            </div>
-            <SyncPill sync={sync} />
-          </div>
-        </div>
-      </header>
+      <QuickActions
+        onJump={handleJump}
+        canJump={firstOpen !== null}
+        showHistory={showHistory}
+        toggleHistory={() => setShowHistory((v) => !v)}
+      />
 
       <main className="container">
         <Hero s={s} />
-        <Tiles s={s} />
-        <Toolbar
-          date={date}
-          setDate={setDate}
-          amount={amount}
-          setAmount={setAmount}
-          onLog={handleLog}
-          onJump={handleJump}
-          canJump={firstOpen !== null}
-          showHistory={showHistory}
-          toggleHistory={() => setShowHistory((v) => !v)}
-        />
+        <Countdown />
 
         <Drawer
           open={showHistory}
@@ -124,11 +84,12 @@ export default function App() {
             </div>
           </header>
 
+          {/* No date picker any more — crossing a cell off stamps it today. */}
           <Grid
             crossed={crossed}
             dates={dates}
             flashing={flashing}
-            onToggle={(i) => toggle(i, date || today())}
+            onToggle={(i) => toggle(i, today())}
           />
         </section>
 

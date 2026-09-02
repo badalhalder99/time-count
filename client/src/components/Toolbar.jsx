@@ -1,14 +1,4 @@
-export default function Toolbar({
-  date,
-  setDate,
-  amount,
-  setAmount,
-  onLog,
-  onJump,
-  showHistory,
-  toggleHistory,
-  canJump,
-}) {
+export default function Toolbar({ date, setDate, amount, setAmount, onLog }) {
   return (
     <section className="card controls">
       <div className="field">
@@ -39,14 +29,6 @@ export default function Toolbar({
         <div className="btn-row">
           <button className="btn primary" onClick={onLog}>
             Log hours
-          </button>
-          {canJump && (
-            <button className="btn ghost" onClick={onJump}>
-              Jump to current
-            </button>
-          )}
-          <button className="btn ghost" onClick={toggleHistory}>
-            {showHistory ? "Hide history" : "Show history"}
           </button>
         </div>
       </div>

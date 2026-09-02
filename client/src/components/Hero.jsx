@@ -1,5 +1,3 @@
-import { TOTAL } from "../lib/constants.js";
-
 function Ring({ percent }) {
   const r = 52;
   const circumference = 2 * Math.PI * r;
@@ -43,52 +41,6 @@ export default function Hero({ s }) {
         <div className="track" aria-hidden="true">
           <div className="track-fill" style={{ width: Math.max(s.percent, 0.4) + "%" }} />
         </div>
-
-        <div className="hero-meta">
-          <strong>{s.hoursDone.toLocaleString()}</strong> done
-          <span className="dot" />
-          <strong>{TOTAL.toLocaleString()}</strong> total
-          <span className="dot" />
-          finish by <strong>{s.targetLabel}</strong>
-          {!s.targetPassed && s.hoursLeft > 0 && (
-            <>
-              <span className="dot" />
-              <strong>{s.daysToTarget.toLocaleString()}</strong> days left
-            </>
-          )}
-        </div>
-
-        {s.hoursLeft > 0 && (
-          <div className={"pace" + (s.onTrack ? " good" : "")}>
-            <span className="pace-badge">
-              {s.targetPassed
-                ? "Target date passed"
-                : s.onTrack
-                  ? "On track"
-                  : s.days === 0
-                    ? "Not started"
-                    : "Behind schedule"}
-            </span>
-            <span className="pace-text">
-              {s.targetPassed ? (
-                <>
-                  <strong>{s.hoursLeft.toLocaleString()}</strong> hours still to go.
-                </>
-              ) : (
-                <>
-                  Needs <strong>{s.requiredPerDay.toFixed(1)} h/day</strong> from here
-                  {s.days > 0 && (
-                    <>
-                      {" "}
-                      — you average <strong>{s.avg.toFixed(1)}</strong>
-                    </>
-                  )}
-                  .
-                </>
-              )}
-            </span>
-          </div>
-        )}
       </div>
 
       <Ring percent={s.percent} />
