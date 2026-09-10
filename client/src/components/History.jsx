@@ -58,6 +58,7 @@ export default function History({ s }) {
   return (
     <div className="history">
       <div className="history-head">
+        <div className="hh-note">Week start Saturday – End Friday</div>
         <div className="hh-item">
           <span className="hh-label">Today</span>
           <span className="hh-value">{dayDate(today())}</span>

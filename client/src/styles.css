@@ -463,9 +463,15 @@ td.right, th.right { text-align: right; }
   background: rgba(52, 211, 153, 0.1);
   border: 1px solid rgba(52, 211, 153, 0.22);
 }
-/* A day with no reading: kept in the list, but visibly quieter. */
+/* A day with no reading: quieter text, and only its 0 h badge turns red.
+   The row separator stays the standard colour like every other row. */
 .zero-row td { color: var(--text-3); }
 .zero-row td.strong { color: var(--text-3); font-weight: 500; }
+.zero-row .badge.subtle {
+  color: var(--red);
+  border-color: var(--red);
+  background: rgba(248, 113, 113, 0.08);
+}
 
 .badge.subtle {
   color: var(--text-2);
@@ -484,6 +490,18 @@ td.right, th.right { text-align: right; }
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
 }
+/* Spans the whole row, so it sits as its own line above the date items. */
+.hh-note {
+  flex-basis: 100%;
+  margin-bottom: 2px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--accent-soft);
+}
+
 .hh-item { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .hh-label {
   font-size: 10.5px;
