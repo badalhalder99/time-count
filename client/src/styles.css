@@ -496,6 +496,7 @@ td.right, th.right { text-align: right; }
   white-space: nowrap;
 }
 .hh-value .sep { color: var(--text-3); font-weight: 400; }
+.hh-value.accent { color: var(--accent); }
 .hh-sub { color: var(--text-3); font-weight: 500; }
 
 /* Saturday-to-Friday group banner inside the history table */

@@ -1,5 +1,5 @@
 import { Tile } from "./Tiles";
-import { HOURS_PER_WEEK } from "../lib/constants.js";
+import { HOURS_PER_WEEK, WEEKLY_TARGET_HOURS } from "../lib/constants.js";
 import { formatHM } from "../lib/stats.js";
 import { dayDate, longDate, parseYmd, pretty, today } from "../lib/dates.js";
 
@@ -69,6 +69,12 @@ export default function History({ s }) {
           </span>
         </div>
         <div className="hh-item">
+          <span className="hh-label">Weekly reading target</span>
+          <span className="hh-value accent">
+            {WEEKLY_TARGET_HOURS}h <span className="hh-sub">every week</span>
+          </span>
+        </div>
+        <div className="hh-item">
           <span className="hh-label">In hand each week</span>
           <span className="hh-value">
             {HOURS_PER_WEEK}h <span className="hh-sub">(24 × 7)</span>
@@ -78,7 +84,12 @@ export default function History({ s }) {
 
       <div className="tiles inset">
         <Tile value={s.days} label="Days studied" hint="days with hours logged" />
-        <Tile value={s.best || "—"} label="Best day" hint="most in one day" />
+        <Tile
+          value={s.hoursDone.toLocaleString()}
+          label="Total reading hours"
+          hint="hours crossed off so far"
+          accent={s.hoursDone > 0}
+        />
         <Tile
           value={s.secondBestDay ? s.secondBestDay.n : "—"}
           label="2nd Best day"
