@@ -38,6 +38,39 @@ export function pretty(s) {
   });
 }
 
+/** "Sat, Sep 5, 2026" — a single day, spelled out with its weekday. */
+export function dayDate(s) {
+  return parseYmd(s).toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+/**
+ * The Saturday that opens the week containing `s`. Weeks run Saturday 00:00 to
+ * Friday 23:59:59 local time.
+ *
+ * Every stamp in this app is already a local "YYYY-MM-DD" (see ymd above), so
+ * the boundary falls out for free: an entry made at Friday 23:59 carries that
+ * Friday's date and stays in the closing week, while one made a minute later at
+ * Saturday 00:00 carries the Saturday and opens the next.
+ */
+export function weekStartOf(s) {
+  const d = parseYmd(s);
+  // getDay(): 0=Sun … 6=Sat. Days to step back to reach Saturday:
+  // Sat->0, Sun->1, Mon->2, Tue->3, Wed->4, Thu->5, Fri->6
+  const back = (d.getDay() + 1) % 7;
+  d.setDate(d.getDate() - back);
+  return ymd(d);
+}
+
+/** The Friday that closes the week containing `s`. */
+export function weekEndOf(s) {
+  return shiftDays(weekStartOf(s), 6);
+}
+
 /** Whole days from date string `a` to date string `b`. Negative if b is past. */
 export function daysBetween(a, b) {
   const ms = parseYmd(b).getTime() - parseYmd(a).getTime();
