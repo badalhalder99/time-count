@@ -134,13 +134,15 @@ export default function History({ s }) {
               <tbody key={week.start}>
                 <WeekHead week={week} />
                 {week.rows.map((r) => (
-                  <tr key={r.day}>
+                  <tr key={r.day} className={r.n === 0 ? "zero-row" : ""}>
                     <td className="strong">{pretty(r.day)}</td>
                     <td>
-                      <span className="badge">{r.n} h</span>
+                      <span className={"badge" + (r.n === 0 ? " subtle" : "")}>
+                        {r.n} h
+                      </span>
                     </td>
                     <td className="muted">
-                      {r.hi === r.lo ? r.hi : `${r.hi} – ${r.lo}`}
+                      {r.n === 0 ? "—" : r.hi === r.lo ? r.hi : `${r.hi} – ${r.lo}`}
                     </td>
                     <td className="right">{r.leftAfter}</td>
                   </tr>

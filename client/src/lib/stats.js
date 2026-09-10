@@ -125,14 +125,32 @@ export function summarize(crossed, dates) {
   const best = byHours[0]?.n ?? 0;
   const secondBestDay = byHours[1] ?? null; // null with fewer than 2 days logged
 
-  // newest first, with a running total
-  let run = 0;
-  const rows = keys
-    .map((k) => {
-      run += map[k].n;
-      return { day: k, ...map[k], cumulative: run, leftAfter: TOTAL - run };
-    })
-    .reverse();
+  // Every calendar day from the first one logged through today, newest first.
+  // Days with no reading are kept as 0 h rows so the gaps stay visible instead
+  // of the list silently skipping them. A future-dated entry, if one exists,
+  // extends the range past today.
+  const rows = [];
+  if (keys.length) {
+    const from = keys[0];
+    const newestLogged = keys[keys.length - 1];
+    const to = newestLogged > today() ? newestLogged : today();
+
+    let run = 0;
+    for (let day = from; day <= to; day = shiftDays(day, 1)) {
+      const entry = map[day];
+      const n = entry ? entry.n : 0;
+      run += n;
+      rows.push({
+        day,
+        n,
+        hi: entry ? entry.hi : null,
+        lo: entry ? entry.lo : null,
+        cumulative: run,
+        leftAfter: TOTAL - run,
+      });
+    }
+    rows.reverse();
+  }
 
   const last30 = [];
   for (let k = 29; k >= 0; k--) {

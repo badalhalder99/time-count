@@ -463,6 +463,10 @@ td.right, th.right { text-align: right; }
   background: rgba(52, 211, 153, 0.1);
   border: 1px solid rgba(52, 211, 153, 0.22);
 }
+/* A day with no reading: kept in the list, but visibly quieter. */
+.zero-row td { color: var(--text-3); }
+.zero-row td.strong { color: var(--text-3); font-weight: 500; }
+
 .badge.subtle {
   color: var(--text-2);
   background: var(--surface-3);
