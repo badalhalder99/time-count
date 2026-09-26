@@ -1,3 +1,5 @@
+import WeekTimer from "./WeekTimer";
+
 function Ring({ percent }) {
   const r = 52;
   const circumference = 2 * Math.PI * r;
@@ -43,7 +45,10 @@ export default function Hero({ s }) {
         </div>
       </div>
 
-      <Ring percent={s.percent} />
+      <div className="hero-side">
+        <WeekTimer />
+        <Ring percent={s.percent} />
+      </div>
     </section>
   );
 }

@@ -2,31 +2,31 @@
    Design tokens
    ============================================================ */
 :root {
-  --bg: #090b0f;
-  --bg-glow: radial-gradient(1200px 600px at 50% -200px, #12261c 0%, transparent 70%);
-  --surface: #10131a;
-  --surface-2: #151922;
-  --surface-3: #1a1f2a;
-  --line: #222836;
-  --line-soft: #1b202b;
+  --bg: #cce8e3;
+  --bg-glow: radial-gradient(1200px 600px at 50% -200px, #e6f4f1 0%, transparent 70%);
+  --surface: #ffffff;
+  --surface-2: #f3f9f8;
+  --surface-3: #e3f0ed;
+  --line: #bcd8d1;
+  --line-soft: #d6e9e5;
 
-  --text: #eef1f6;
-  --text-2: #a8b1c1;
-  --text-3: #6f7889;
+  --text: #0d2621;
+  --text-2: #3b5e56;
+  --text-3: #6a8a83;
 
-  --accent: #34d399;
-  --accent-soft: #6ee7b7;
-  --accent-deep: #0f6b45;
-  --accent-glow: rgba(52, 211, 153, 0.16);
-  --amber: #fbbf24;
-  --red: #f87171;
+  --accent: #059669;
+  --accent-soft: #047857;
+  --accent-deep: #065f46;
+  --accent-glow: rgba(5, 150, 105, 0.16);
+  --amber: #b45309;
+  --red: #dc2626;
 
   --radius: 14px;
   --radius-sm: 9px;
   --radius-xs: 7px;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.28);
+  --shadow-sm: 0 1px 2px rgba(13, 38, 33, 0.08);
+  --shadow: 0 1px 2px rgba(13, 38, 33, 0.06), 0 10px 30px rgba(13, 38, 33, 0.1);
 
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, monospace;
   --sans: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system,
@@ -81,7 +81,7 @@ body {
   background: var(--text-3);
   flex: none;
 }
-.pill.ok { color: var(--accent-soft); border-color: rgba(52, 211, 153, 0.28); background: rgba(52, 211, 153, 0.08); }
+.pill.ok { color: var(--accent-soft); border-color: rgba(5, 150, 105, 0.28); background: rgba(5, 150, 105, 0.08); }
 .pill.ok i { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 .pill.busy { color: var(--amber); border-color: rgba(251, 191, 36, 0.28); background: rgba(251, 191, 36, 0.07); }
 .pill.busy i { background: var(--amber); animation: pulse 1.1s ease-in-out infinite; }
@@ -134,7 +134,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   gap: 32px;
   padding: 30px 32px;
   background:
-    radial-gradient(600px 220px at 0% 0%, rgba(52, 211, 153, 0.07), transparent 70%),
+    radial-gradient(600px 220px at 0% 0%, rgba(5, 150, 105, 0.07), transparent 70%),
     var(--surface);
 }
 
@@ -157,7 +157,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   margin: 8px 0 20px;
-  background: linear-gradient(180deg, #ffffff 10%, var(--accent) 190%);
+  background: linear-gradient(180deg, var(--text) 10%, var(--accent) 190%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -177,6 +177,127 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   background: linear-gradient(90deg, var(--accent-deep), var(--accent));
   box-shadow: 0 0 16px var(--accent-glow);
   transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* weekly 168h timer, beside the ring */
+.hero-side { display: flex; align-items: center; gap: 28px; flex: none; }
+
+.week-timer {
+  --wt-bg: var(--surface);
+  --wt-ink: var(--text);
+  --wt-ink-2: var(--text-2);
+  --wt-ink-3: var(--text-3);
+  --wt-green: var(--accent);
+  --wt-line: var(--surface-3);
+
+  position: relative;
+  width: 264px;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background:
+    radial-gradient(240px 110px at 50% 0%, rgba(5, 150, 105, 0.07), transparent 75%),
+    var(--wt-bg);
+  color: var(--wt-ink);
+  box-shadow: var(--shadow);
+}
+
+.wt-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 11px;
+}
+.wt-live {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--wt-green);
+  box-shadow: 0 0 0 3px rgba(11, 122, 82, 0.18);
+  animation: pulse 2s ease-in-out infinite;
+}
+.wt-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--wt-ink-2);
+}
+.wt-total {
+  margin-left: auto;
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--wt-green);
+  background: var(--surface-3);
+}
+
+.wt-clock {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+}
+.wt-seg {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  background: var(--surface-2);
+  box-shadow: 0 1px 2px rgba(13, 38, 33, 0.08);
+}
+.wt-val {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--wt-ink);
+}
+.wt-seg.lead .wt-val { color: var(--wt-green); }
+.wt-unit {
+  margin-top: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--wt-ink-3);
+}
+.wt-colon {
+  padding-top: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--wt-ink-3);
+}
+
+.wt-bar {
+  height: 5px;
+  margin-top: 12px;
+  border-radius: 99px;
+  background: var(--wt-line);
+  overflow: hidden;
+}
+.wt-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #34d399, var(--wt-green));
+  transition: width 1s linear;
+}
+
+.wt-foot {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--wt-ink-2);
 }
 
 /* progress ring */
@@ -268,7 +389,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, transform 0.06s;
 }
-.btn:hover { background: var(--surface-3); border-color: #303747; }
+.btn:hover { background: var(--surface-3); border-color: #a3c9c0; }
 .btn:active { transform: translateY(1px); }
 .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-glow); }
 
@@ -283,7 +404,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
 .drawer-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(4, 6, 10, 0.62);
+  background: rgba(13, 38, 33, 0.3);
   backdrop-filter: blur(3px);
   animation: fadeIn 0.2s ease;
 }
@@ -298,7 +419,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   flex-direction: column;
   background: var(--surface);
   border-left: 1px solid var(--line);
-  box-shadow: -28px 0 70px rgba(0, 0, 0, 0.55);
+  box-shadow: -28px 0 70px rgba(13, 38, 33, 0.18);
   animation: slideInRight 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   outline: none;
 }
@@ -311,7 +432,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   gap: 16px;
   padding: 20px 20px 16px;
   border-bottom: 1px solid var(--line-soft);
-  background: linear-gradient(180deg, rgba(52, 211, 153, 0.05), transparent);
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.05), transparent);
 }
 .drawer-title h2 {
   margin: 0;
@@ -405,7 +526,7 @@ main.container { padding-top: 64px; padding-bottom: 80px; }
   background: linear-gradient(180deg, var(--accent-soft), var(--accent-deep));
 }
 .chart .col:hover i { transform: scaleY(1.03); transform-origin: bottom; }
-.chart .col.has:hover i { background: linear-gradient(180deg, #fff, var(--accent)); }
+.chart .col.has:hover i { background: linear-gradient(180deg, var(--accent), var(--accent-deep)); }
 .chart .col b {
   position: absolute;
   bottom: -20px;
@@ -460,8 +581,8 @@ td.right, th.right { text-align: right; }
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--accent-soft);
-  background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.22);
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.22);
 }
 /* A day with no reading: quieter text, and only its 0 h badge turns red.
    The row separator stays the standard colour like every other row. */
@@ -590,8 +711,8 @@ tbody tr.week-row:hover { background: var(--surface-2); }
 }
 .swatch.open { background: var(--surface-3); border: 1px solid var(--line); }
 .swatch.filled {
-  background: rgba(52, 211, 153, 0.16);
-  border: 1px solid rgba(52, 211, 153, 0.45);
+  background: rgba(5, 150, 105, 0.16);
+  border: 1px solid rgba(5, 150, 105, 0.45);
 }
 
 .blocks { padding: 6px 22px 18px; }
@@ -664,11 +785,11 @@ tbody tr.week-row:hover { background: var(--surface-2); }
 }
 .cell:hover {
   background: var(--surface-3);
-  border-color: #333b4d;
+  border-color: #a3c9c0;
   transform: translateY(-1px);
 }
 .cell:active { transform: translateY(0); }
-.cell:focus-within { border-color: rgba(52, 211, 153, 0.5); box-shadow: 0 0 0 3px var(--accent-glow); }
+.cell:focus-within { border-color: rgba(5, 150, 105, 0.5); box-shadow: 0 0 0 3px var(--accent-glow); }
 
 /* Custom checkbox: 2500 native white boxes read as visual noise. */
 .cell input {
@@ -680,12 +801,12 @@ tbody tr.week-row:hover { background: var(--surface-2); }
   height: 14px;
   flex: none;
   cursor: pointer;
-  border: 1.5px solid #2e3648;
+  border: 1.5px solid #9fc3ba;
   border-radius: 4px;
   background: var(--surface-3);
   transition: background 0.13s, border-color 0.13s;
 }
-.cell:hover input { border-color: #3d4759; }
+.cell:hover input { border-color: var(--accent); }
 .cell input:checked {
   background: var(--accent);
   border-color: var(--accent);
@@ -697,7 +818,7 @@ tbody tr.week-row:hover { background: var(--surface-2); }
   top: 1px;
   width: 3px;
   height: 7px;
-  border: solid #052015;
+  border: solid #ffffff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
@@ -706,8 +827,8 @@ tbody tr.week-row:hover { background: var(--surface-2); }
 .cell-num { color: var(--text-2); }
 
 .cell.done {
-  background: rgba(52, 211, 153, 0.07);
-  border-color: rgba(52, 211, 153, 0.28);
+  background: rgba(5, 150, 105, 0.07);
+  border-color: rgba(5, 150, 105, 0.28);
 }
 .cell.done .cell-num {
   color: var(--text-3);
@@ -715,15 +836,15 @@ tbody tr.week-row:hover { background: var(--surface-2); }
   text-decoration-thickness: 1.5px;
   text-decoration-color: var(--accent);
 }
-.cell.done:hover { background: rgba(52, 211, 153, 0.11); }
+.cell.done:hover { background: rgba(5, 150, 105, 0.11); }
 
 .cell.flash {
   animation: flash 1.1s ease-out;
   border-color: var(--accent);
 }
 @keyframes flash {
-  0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); background: rgba(52, 211, 153, 0.3); }
-  100% { box-shadow: 0 0 0 12px rgba(52, 211, 153, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.55); background: rgba(5, 150, 105, 0.3); }
+  100% { box-shadow: 0 0 0 12px rgba(5, 150, 105, 0); }
 }
 
 .foot {
@@ -748,14 +869,14 @@ tbody tr.week-row:hover { background: var(--surface-2); }
 /* These float over page content, so they need a real surface behind them
    rather than the ghost button's transparent one. */
 .quick-actions .btn.ghost {
-  background: rgba(21, 25, 34, 0.88);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px) saturate(140%);
   color: var(--text-2);
   box-shadow: var(--shadow-sm);
 }
 .quick-actions .btn.ghost:hover {
   background: var(--surface-3);
-  border-color: #303747;
+  border-color: #a3c9c0;
   color: var(--text);
 }
 
@@ -765,7 +886,7 @@ tbody tr.week-row:hover { background: var(--surface-2); }
 .countdown {
   padding: 24px 32px 28px;
   background:
-    radial-gradient(620px 240px at 100% 0%, rgba(52, 211, 153, 0.06), transparent 70%),
+    radial-gradient(620px 240px at 100% 0%, rgba(5, 150, 105, 0.06), transparent 70%),
     var(--surface);
 }
 
@@ -837,6 +958,7 @@ tbody tr.week-row:hover { background: var(--surface-2); }
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .hero { flex-direction: column; align-items: flex-start; gap: 24px; }
   .ring-wrap { align-self: center; }
+  .hero-side { align-self: center; flex-wrap: wrap; justify-content: center; }
   .countdown { padding: 22px 22px 26px; }
 }
 
