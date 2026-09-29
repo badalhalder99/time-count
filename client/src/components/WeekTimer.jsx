@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
 import { HOURS_PER_WEEK } from "../lib/constants.js";
-import { parseYmd, shiftDays, today, weekStartOf } from "../lib/dates.js";
 
 const WEEK_SECS = HOURS_PER_WEEK * 3600;
+const RESET_HOUR = 6; // Saturday 06:00 local time
 
-// Counts down the 168 hours of the current Saturday-to-Friday week. The time
+/** The next Saturday 06:00 (local) strictly after `now`. */
+function nextReset(now) {
+  const d = new Date(now);
+  d.setHours(RESET_HOUR, 0, 0, 0);
+  // getDay(): 0=Sun … 6=Sat. Days forward to reach Saturday.
+  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7));
+  // Already past this Saturday's 06:00 -> the one a week later.
+  if (d.getTime() <= now) d.setDate(d.getDate() + 7);
+  return d;
+}
+
+// Counts down the 168 hours between one Saturday 06:00 and the next. The time
 // left is derived from the clock on every tick (never stored), so it starts
-// over at 168:00:00 on its own when Saturday 00:00 arrives.
+// over at 168:00:00 on its own the moment Saturday 06:00 arrives.
 function remaining() {
   const now = Date.now();
-  const next = parseYmd(shiftDays(weekStartOf(today()), 7));
+  const next = nextReset(now);
   const secs = Math.max(Math.floor((next.getTime() - now) / 1000), 0);
   return {
     hours: Math.floor(secs / 3600),
@@ -70,7 +81,7 @@ export default function WeekTimer() {
 
       <div className="wt-foot">
         <span>{left.elapsed.toFixed(1)}% gone</span>
-        <span>Resets {left.resetsOn}</span>
+        <span>Resets {left.resetsOn}, 6 AM</span>
       </div>
     </div>
   );
